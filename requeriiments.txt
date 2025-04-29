@@ -1,0 +1,12 @@
+certifi==2025.1.31
+charset-normalizer==3.4.1
+colorama==0.4.6
+halo==0.0.31
+idna==3.10
+log-symbols==0.0.14
+python-dotenv==1.1.0
+requests==2.32.3
+six==1.17.0
+spinners==0.0.24
+termcolor==3.0.1
+urllib3==2.4.0
