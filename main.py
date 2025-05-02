@@ -108,6 +108,7 @@ class GitlabReleaseManager:
         self.source_branch = source_branch
         self.target_branch = target_branch
         self.emoji = "no_mouth"
+        self.emojis = ["no_mouth", "thumbsup"]
 
     def get_latest_tag(self) -> str:
         """Get latest tag from the repo"""
@@ -216,8 +217,9 @@ class GitlabReleaseManager:
         response = requests.post(url, headers=self.headers)
 
         # Add emojii
-        url = f"{self.api_url}/projects/{self.project_id}/merge_requests/{mr_id}/award_emoji?name={self.emoji}"
-        requests.post(url, headers=self.headers)
+        for emojiName in self.emojis:
+            url = f"{self.api_url}/projects/{self.project_id}/merge_requests/{mr_id}/award_emoji?name={emojiName}"
+            requests.post(url, headers=self.headers)
 
         if response.status_code not in [200, 201]:
             print(f"Error in the approve of merge request: {response.text}")
@@ -253,7 +255,6 @@ class GitlabReleaseManager:
             print(f"Error merging MR: {response.text}")
             return False
         return True
-
 
     @Halo(text="Creating Tag", spinner="dots3")
     def create_tag(self, tag_name: str, ref: str) -> bool:
@@ -371,7 +372,7 @@ class GitlabReleaseManager:
 
         Alert.info("Creating new TAG")
         if not skip:
-            rslt =  self.create_tag(new_tag, "main")
+            rslt = self.create_tag(new_tag, "main")
             if not rslt:
                 Alert.error("Tag not created")
                 sys.exit(1)
