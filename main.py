@@ -273,7 +273,7 @@ class GitlabReleaseManager:
     def run_release_proccess(self):
         """Execute all"""
 
-        skip = True
+        skip = False
 
         Alert.info("Initializing")
 
