@@ -329,10 +329,15 @@ class GitlabReleaseManager:
 
         # 6. check conflicts
         Alert.info("Checking status")
-        mr_state = self.check_for_conflicts(mr_id)
+        mr_state = None
+        while True:
+            mr_state = self.check_for_conflicts(mr_id)
+            if mr_state["prepared_at"]:
+                break
         has_conflicts = mr_state["has_conflicts"]
         Alert.info("Has conflicts:", mr_state["has_conflicts"], 2)
         Alert.info("Changes:", mr_state["changes_count"], 2)
+        Alert.info("Prepared:", mr_state["prepared_at"], 2)
         Alert.info("Status:", mr_state["merge_status"], 2)
         Alert.info("State:", mr_state["state"], 2)
         Alert.info("Web URL:", mr_state["web_url"], 2)
