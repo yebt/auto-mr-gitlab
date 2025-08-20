@@ -177,12 +177,13 @@ class GitlabReleaseManager:
 
         # TODO: add support to map breaking changes to map a major version
         # Applay semantic versioning
+
         if commit_counts["feat"] > 0:
             minor += commit_counts["feat"]
-            # if commit_counts["fix"] > 0:
-            #     patch += commit_counts["fix"]
-        if commit_counts["fix"] > 0:
-            patch = commit_counts["fix"]
+            if commit_counts["fix"] > 0:
+                patch = commit_counts["fix"]
+        elif commit_counts["fix"] > 0:
+            patch += commit_counts["fix"]
         else:
             patch = 1
 
