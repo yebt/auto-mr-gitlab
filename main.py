@@ -333,7 +333,13 @@ class GitlabReleaseManager:
         Alert.success("New MR title generated:", mr_title)
 
         # 4.1 Verificar si el release tendría cambios
+        #
+        Alert.info("Checking diffs in branchs")
+        spinner = Halo(text="Creating", spinner="dots4")
+        spinner.start()
         counts = self.compare_branches(self.target_branch, self.source_branch)
+        spinner.succeed()
+        spinner.stop()
         Alert.info(
             "Cambios a liberar:",
             f"commits={counts['commits']}, diffs={counts['diffs']}",
@@ -345,6 +351,7 @@ class GitlabReleaseManager:
         elif counts["commits"] == 0:
             Alert.warning("No commits, stopping")
             Alert.header("Cancelling deploy")
+            sys.exit(0)
 
         # 5. Create MR from development to main
         Alert.info("Crating MR")
