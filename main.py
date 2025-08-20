@@ -8,13 +8,12 @@ import time
 import requests
 import datetime
 import argparse
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 from dotenv import load_dotenv
 from halo import Halo
 
 
 class Alert:
-
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"
@@ -92,7 +91,6 @@ class Alert:
 
 
 class GitlabReleaseManager:
-
     def __init__(
         self,
         token: str,
@@ -141,6 +139,8 @@ class GitlabReleaseManager:
         """count commits by type"""
         url = f"{self.api_url}/projects/{self.project_id}/repository/commits"
         params = {"ref_name": to_branch, "since": self._get_commit_date(from_commit)}
+
+        Alert.info(str(params))
 
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
@@ -289,21 +289,21 @@ class GitlabReleaseManager:
             last_tag = "v2.18."
         else:
             last_tag = self.get_latest_tag()
-        Alert.success(f"Last tag:", last_tag)
+        Alert.success("Last tag:", last_tag)
 
         # 2. Count commits
         if skip:
             commit_counts = {"fix": 8, "feat": 4}
         else:
             commit_counts = self.count_commits_by_type(last_tag)
-        Alert.success(f"Commits found:", str(commit_counts))
+        Alert.success("Commits found:", str(commit_counts))
 
         # 3. Make new tag just the string
         if skip:
             new_tag = "v2.22.8"
         else:
             new_tag = self.generate_new_tag(last_tag, commit_counts)
-        Alert.success(f"New tag generated", new_tag)
+        Alert.success("New tag generated", new_tag)
 
         # 4 Make new title, just string
         if skip:
@@ -388,7 +388,6 @@ class GitlabReleaseManager:
 
 
 if __name__ == "__main__":
-
     Alert.print_header()
 
     Alert.header("# Initializing proccess:")
@@ -400,14 +399,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Automatization MR")
     parser.add_argument(
         "--token",
-        required=env_token == None,
+        # required=env_token == None,
+        required=(env_token is None),
         default=os.getenv("GITLAB_ACCESS_TOKEN"),
         help="GitLab Personal Access Token",
     )
 
     parser.add_argument(
         "--project",
-        required=env_project == None,
+        required=(env_project is None),
         default=os.getenv("GITLAB_PROJECT_ID"),
         help="GitLab Project ID",
     )
