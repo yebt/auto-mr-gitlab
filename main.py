@@ -108,6 +108,25 @@ class GitlabReleaseManager:
         self.emoji = "no_mouth"
         self.emojis = ["no_mouth", "thumbsup"]
 
+    def compare_branches(self, from_ref: str, to_ref: str) -> Dict[str, int]:
+        """
+        Compara ramas usando /repository/compare.
+        from_ref: normalmente target_branch (p.ej. main)
+        to_ref:   normalmente source_branch (p.ej. development)
+        Retorna conteo de commits y diffs que entrarían al MR.
+        """
+        url = f"{self.api_url}/projects/{self.project_id}/repository/compare"
+        params = {"from": from_ref, "to": to_ref, "straight": "true"}
+        response = requests.get(url, headers=self.headers, params=params)
+        if response.status_code != 200:
+            Alert.error(f"Error comparing branches: {response.text}")
+            sys.exit(1)
+        data = response.json()
+        return {
+            "commits": len(data.get("commits", [])),
+            "diffs": len(data.get("diffs", [])),
+        }
+
     def get_latest_tag(self) -> str:
         """Get latest tag from the repo"""
         url = f"{self.api_url}/projects/{self.project_id}/repository/tags"
@@ -140,7 +159,7 @@ class GitlabReleaseManager:
         url = f"{self.api_url}/projects/{self.project_id}/repository/commits"
         params = {"ref_name": to_branch, "since": self._get_commit_date(from_commit)}
 
-        Alert.info(str(params))
+        Alert.info("Commits By Type:", str(params))
 
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
@@ -312,6 +331,20 @@ class GitlabReleaseManager:
             today = datetime.datetime.now().strftime("%d.%m.%Y")
             mr_title = f"Main Release: {today} TAG: {new_tag}"
         Alert.success("New MR title generated:", mr_title)
+
+        # 4.1 Verificar si el release tendría cambios
+        counts = self.compare_branches(self.target_branch, self.source_branch)
+        Alert.info(
+            "Cambios a liberar:",
+            f"commits={counts['commits']}, diffs={counts['diffs']}",
+        )
+        if counts["commits"] == 0 and counts["diffs"] == 0:
+            Alert.warning("Relese without changes. No MR created")
+            Alert.header("Nothing to deploy")
+            sys.exit(0)
+        elif counts["commits"] == 0:
+            Alert.warning("No commits, stopping")
+            Alert.header("Cancelling deploy")
 
         # 5. Create MR from development to main
         Alert.info("Crating MR")
