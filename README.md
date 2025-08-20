@@ -1,27 +1,27 @@
 # auto-mr-gitlab
 
-**auto-mr-gitlab** es una herramienta en Python que automatiza el proceso de creación, aprobación y merge de *Merge Requests* en proyectos de GitLab, además de gestionar el versionado semántico mediante etiquetas (*tags*).
+**auto-mr-gitlab** es una herramienta en Python que automatiza el proceso de creación, aprobación y merge de _Merge Requests_ en proyectos de GitLab, además de gestionar el versionado semántico mediante etiquetas (_tags_).
 
 ---
 
 ## Características principales
 
-- Obtención del último *tag* del repositorio.
-- Conteo automático de *commits* clasificados como `feat` o `fix`.
-- Generación de un nuevo *tag* basado en el conteo de cambios, siguiendo versionado semántico.
-- Creación automática de un *Merge Request* (MR) entre `development` y `main`.
+- Obtención del último _tag_ del repositorio.
+- Conteo automático de _commits_ clasificados como `feat` o `fix`.
+- Generación de un nuevo _tag_ basado en el conteo de cambios, siguiendo versionado semántico.
+- Creación automática de un _Merge Request_ (MR) entre `development` y `main`.
 - Aprobación automática del MR.
-- Revisión de conflictos antes del *merge*.
-- Realización del *merge* del MR.
-- Creación de una nueva etiqueta (*tag*) post-merge.
+- Revisión de conflictos antes del _merge_.
+- Realización del _merge_ del MR.
+- Creación de una nueva etiqueta (_tag_) post-merge.
 - Interfaz visual en terminal con colores y spinners.
 
 ## Requisitos
 
 - Python 3.7+
 - Token de acceso personal (PAT) de GitLab con permisos para:
-  - Crear/leer *Merge Requests*
-  - Crear etiquetas (*tags*)
+  - Crear/leer _Merge Requests_
+  - Crear etiquetas (_tags_)
   - Leer el repositorio
 
 ## Instalación
@@ -95,10 +95,19 @@ Parámetros como `source_branch` y `target_branch` están definidos por defecto 
 
 ## TODO / Mejoras futuras
 
-- Detectar *breaking changes* para incrementar la versión mayor (major).
+- Detectar _breaking changes_ para incrementar la versión mayor (major).
 - Parametrizar `source_branch` y `target_branch` vía argumentos.
 - Mejorar el manejo de errores y reintentos.
 - Agregar opciones de "dry-run".
+
+## Compilar a bundler
+
+```sh
+pyinstaller --onefile main.py
+
+```
+
+This create a `./dist/main` executable
 
 ## Licencia
 
@@ -108,7 +117,7 @@ Este proyecto está bajo la licencia MIT.
 
 ## Contribuciones
 
-¡Las contribuciones son bienvenidas! Puedes abrir *issues* o *pull requests* para mejoras o correcciones.
+¡Las contribuciones son bienvenidas! Puedes abrir _issues_ o _pull requests_ para mejoras o correcciones.
 
 ---
 
